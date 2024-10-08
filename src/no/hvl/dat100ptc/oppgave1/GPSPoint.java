@@ -1,76 +1,57 @@
 package no.hvl.dat100ptc.oppgave1;
 
-import no.hvl.dat100ptc.TODO;
-
 public class GPSPoint {
 
-	// TODO - objektvariable
-	
-	public GPSPoint(int time, double latitude, double longitude, double elevation) {
+    // Objektvariable
+    private int time;         // tiden i sekunder
+    private double latitude;  // breddegrad
+    private double longitude; // lengdegrad
+    private double elevation; // høyde i meter
 
-		// TODO - konstruktur
+    // Konstruktør
+    public GPSPoint(int time, double latitude, double longitude, double elevation) {
+        this.time = time;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.elevation = elevation;
+    }
 
-		throw new UnsupportedOperationException(TODO.construtor("GPSPoint"));
-		
-	}
+    // Get- og Set-metoder
+    public int getTime() {
+        return time;
+    }
 
-	// TODO - get/set metoder
-	public int getTime() {
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-	}
+    public void setTime(int time) {
+        this.time = time;
+    }
 
-	public void setTime(int time) {
-				
-		throw new UnsupportedOperationException(TODO.method());
-		
-	}
+    public double getLatitude() {
+        return latitude;
+    }
 
-	public double getLatitude() {
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-		
-	}
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
 
-	public void setLatitude(double latitude) {
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-	}
+    public double getLongitude() {
+        return longitude;
+    }
 
-	public double getLongitude() {
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-	}
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
 
-	public void setLongitude(double longitude) {
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-	}
+    public double getElevation() {
+        return elevation;
+    }
 
-	public double getElevation() {
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-	}
+    public void setElevation(double elevation) {
+        this.elevation = elevation;
+    }
 
-	public void setElevation(double elevation) {
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-	}
-	
-	public String toString() {
-		
-		String str;
-		
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO
-		
-	}
+    // toString-metoden som returnerer strengrepresentasjon
+    @Override
+    public String toString() {
+        return time + " (" + latitude + "," + longitude + ") " + elevation + "\n";
+    }
 }
