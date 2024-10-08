@@ -1,48 +1,43 @@
 package no.hvl.dat100ptc.oppgave2;
 
-import no.hvl.dat100ptc.TODO;
 import no.hvl.dat100ptc.oppgave1.GPSPoint;
 
 public class GPSData {
 
-	private GPSPoint[] gpspoints;
-	protected int antall = 0;
+    private GPSPoint[] gpspoints;
+    protected int antall = 0;
 
-	public GPSData(int antall) {
+    public GPSData(int n) {
+        // Oppretter en referansetabell av GPS punkter
+        this.gpspoints = new GPSPoint[n];
+        this.antall = 0; // Setter antall til 0
+    }
 
-		throw new UnsupportedOperationException(TODO.method());
-		
-		// TODO
-	}
+    public GPSPoint[] getGPSPoints() {
+        return this.gpspoints;
+    }
+    
+    protected boolean insertGPS(GPSPoint gpspoint) {
+        if (antall < gpspoints.length) {
+            gpspoints[antall] = gpspoint; // Setter inn GPS-punktet
+            antall++; // Inkrementerer antall
+            return true;
+        }
+        return false; // Ingen plass i tabellen
+    }
 
-	public GPSPoint[] getGPSPoints() {
-		return this.gpspoints;
-	}
-	
-	protected boolean insertGPS(GPSPoint gpspoint) {
+    public boolean insert(String time, String latitude, String longitude, String elevation) {
+        GPSPoint gpspoint = GPSDataConverter.convert(time, latitude, longitude, elevation);
+        return insertGPS(gpspoint); // Setter inn GPS-punktet
+    }
 
-		boolean inserted = false;
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-		// TODO 
-	
-	}
-
-	public boolean insert(String time, String latitude, String longitude, String elevation) {
-
-		GPSPoint gpspoint;
-
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO 
-		
-	}
-
-	public void print() {
-
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO 
-	}
+    public void print() {
+        System.out.println("====== GPS Data - START ======");
+        for (int i = 0; i < antall; i++) {
+            if (gpspoints[i] != null) {
+                System.out.println(gpspoints[i].toString()); // Skriver ut GPSPoint-objektet
+            }
+        }
+        System.out.println("====== GPS Data - SLUTT ======");
+    }
 }
