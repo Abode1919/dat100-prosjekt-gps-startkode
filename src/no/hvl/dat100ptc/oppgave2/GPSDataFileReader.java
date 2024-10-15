@@ -6,71 +6,74 @@ import javax.swing.*;
 
 public class GPSDataFileReader {
 
-    // separator i CSV-filer
-    private static String SEP_STR = ",";
+	// entry separator in CSV files
+	private static String SEP_STR = ",";
 
-    private static  String GPSDATA_FORMAT = "time,lat,lon,elevation,accuracy,bearing,speed,satellites,"
-            + "provider,hdop,vdop,pdop,geoidheight,ageofdgpsdata,dgpsid,activity,battery,annotation";
+	private static  String GPSDATA_FORMAT = "time,lat,lon,elevation,accuracy,bearing,speed,satellites,"
+			+ "provider,hdop,vdop,pdop,geoidheight,ageofdgpsdata,dgpsid,activity,battery,annotation";
 
-    // plassering av GPS-datafiler i dette Eclipse-prosjektet
-    private static String GPSLOGS_DIR = "../logs/";
+	// location of GPS data files in this Eclipse project
+	private static String GPSLOGS_DIR = System.getProperty("user.dir") + "/logs/";
 
-    public static GPSData readGPSFile(String filename) {
-        BufferedReader br = null;
-        GPSData gpsdata = null;
+	public static GPSData readGPSFile(String filename) {
 
-        String time, latitude, longitude, elevation;
+		BufferedReader br = null;
+		GPSData gpsdata = null;
 
-        try {
-            br = new BufferedReader(new FileReader(GPSLOGS_DIR + filename + ".csv"));
+		String time, latitude, longitude, elevation;
 
-            String line = br.readLine();
+		try {
 
-            // første linje spesifiserer talet på innslag i gps-datafila
-            int n = Integer.parseInt(line);
+			br = new BufferedReader(new FileReader(GPSLOGS_DIR + filename + ".csv"));
 
-            // allokerer tabellar for det rette talet av innslag
-            gpsdata = new GPSData(n);
+			String line = br.readLine();
 
-            // hoppar over beskrivelseslinja ved å berre lese den
-            line = br.readLine();
+			// first line specifies number of entries in the gps data file
+			int n = Integer.parseInt(line);
 
-            int i = 0;
+			// allocate arrays for the right number of entries
+			gpsdata = new GPSData(n);
 
-            line = br.readLine();
+			// skip the description line by simply reading it
+			line = br.readLine();
 
-            while (line != null && i < n) {
-                // splittar logginnslag
-                String[] gpsdatapoint = line.split(SEP_STR);
+			int i = 0;
 
-                time = gpsdatapoint[0];
-                latitude = gpsdatapoint[1];
-                longitude = gpsdatapoint[2];
-                elevation = gpsdatapoint[3];
-                
-                gpsdata.insert(time, latitude, longitude, elevation);
+			line = br.readLine();
 
-                // prøver å lese neste linje
-                line = br.readLine();
-                i++;
-            }
+			while (line != null && i < n) {
 
-        } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(null,"GPS-fila " + filename + " finst ikkje");
-            e.printStackTrace();
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null,"GPS-fila " + filename + " kunne ikkje lesast");
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+				// split log entry
+				String[] gpsdatapoint = line.split(SEP_STR);
 
-        return gpsdata;
-    }
+				time = gpsdatapoint[0];
+				latitude = gpsdatapoint[1];
+				longitude = gpsdatapoint[2];
+				elevation = gpsdatapoint[3];
+				
+				gpsdata.insert(time,latitude,longitude,elevation);
+
+				// try reading next line
+				line = br.readLine();
+				i++;
+			}
+
+		} catch (FileNotFoundException e) {
+		    JOptionPane.showMessageDialog(null,"GPS filen " + filename + "finnes ikke");
+			e.printStackTrace();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null,"GPS filen " + filename + "kunne ikke leses");
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return gpsdata;
+	}
 }

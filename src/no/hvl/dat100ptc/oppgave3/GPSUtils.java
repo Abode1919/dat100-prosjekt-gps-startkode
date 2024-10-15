@@ -1,6 +1,7 @@
 package no.hvl.dat100ptc.oppgave3;
 
 import static java.lang.Math.*;
+import java.util.Locale;
 
 import no.hvl.dat100ptc.oppgave1.GPSPoint;
 import no.hvl.dat100ptc.TODO;
@@ -25,106 +26,94 @@ public class GPSUtils {
 	public static double findMin(double[] da) {
 
 		double min;
-		
+
 		min = da[0];
 		
 		for (double d : da) {
-			if(d<min) {
-				min=d;
+			if (d < min) {
+				min = d;
 			}
 		}
 		return min;
-
-	
 		
 	}
 
 	public static double[] getLatitudes(GPSPoint[] gpspoints) {
+
+		double[] latitudes = new double[gpspoints.length];
 		
-        double latitude[]= new double[gpspoints.length];
-        
-		for(int i=0; i<gpspoints.length; i++) {
-			String a = String.valueOf(gpspoints[i]); 
-	        
-	        String b = a.substring(a.indexOf('(') + 1, a.indexOf(')'));
-
-	        String[] koordinat = b.split(",");
-
-	        latitude[i]=Double.parseDouble(koordinat[0]);
-	      
+		for (int i = 0; i < gpspoints.length; i++) {
+			latitudes[i] = gpspoints[i].getLatitude();
 		}
-		return latitude;
-		
+		return latitudes;
 		
 	}
 
 	public static double[] getLongitudes(GPSPoint[] gpspoints) {
 
+		double[] longitudes = new double[gpspoints.length];
 		
-		double longitudes[]= new double[gpspoints.length];
-        
-		for(int i=0; i<gpspoints.length; i++) {
-			String a = String.valueOf(gpspoints[i]); 
-	        
-			String b = a.substring(a.indexOf('(') + 1, a.indexOf(')'));
-
-			String[] koordinat = b.split(",");
-
-			longitudes[i]=Double.parseDouble(koordinat[1]);
+		for (int i = 0; i < gpspoints.length; i++) {
+			longitudes[i] = gpspoints[i].getLongitude();
 		}
 		return longitudes;
+
 	}
 
 	private static final int R = 6371000; // jordens radius
 
 	public static double distance(GPSPoint gpspoint1, GPSPoint gpspoint2) {
-
-		double d;
-		double latitude1, longitude1, latitude2, longitude2;
-				
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO 
+		
+		double latitude1 = Math.toRadians(gpspoint1.getLatitude());
+		double longitude1 = Math.toRadians(gpspoint1.getLongitude());
+		double latitude2 = Math.toRadians(gpspoint2.getLatitude());
+		double longitude2 = Math.toRadians(gpspoint2.getLongitude());
+		
+		double deltaphi = latitude2 - latitude1;
+		double deltadelta = longitude2 - longitude1;
+		
+	    double a = compute_a(latitude1, latitude2, deltaphi, deltadelta);
+		double c = compute_c(a);
+	    double d = R * c;
+		
+		return d;
+		 
 	}
 	
 	private static double compute_a(double phi1, double phi2, double deltaphi, double deltadelta) {
-	
-		throw new UnsupportedOperationException(TODO.method());
-		
-		// TODO 
-
+	    double a = Math.sin(deltaphi / 2) * Math.sin(deltaphi / 2) +
+	               Math.cos(phi1) * Math.cos(phi2) *
+	               Math.sin(deltadelta / 2) * Math.sin(deltadelta / 2);
+	    return a;
 	}
 
 	private static double compute_c(double a) {
-
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-		
-		// TODO 
-
+	    return 2 * Math.asin(Math.sqrt(a));
 	}
 
 	
 	public static double speed(GPSPoint gpspoint1, GPSPoint gpspoint2) {
-
-		int secs;
-		double speed;
 		
-		throw new UnsupportedOperationException(TODO.method());
+		double distanceInMeter = distance(gpspoint1, gpspoint2);
 		
-		// TODO
-
+		int time1 = gpspoint1.getTime();
+		int time2 = gpspoint2.getTime();
+		
+		double timeInSeconds = time2 - time1;
+		
+		double speed = distanceInMeter/timeInSeconds;
+		return speed;
 	}
 
 	public static String formatTime(int secs) {
 
-		String timestr;
-		String TIMESEP = ":";
-
-		throw new UnsupportedOperationException(TODO.method());
+		int hours = secs / 3600;
+		int minutes = (secs % 3600) / 60;
+		int seconds = secs % 60;
 		
-		// TODO 
+		String timestr = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+		
+		return String.format("%10s", timestr);
 		
 	}
 	
@@ -132,12 +121,9 @@ public class GPSUtils {
 
 	public static String formatDouble(double d) {
 
-		String str;
-
+		String str = String.format(Locale.US, "%.2f", d);
 		
-		throw new UnsupportedOperationException(TODO.method());
-		
-		// TODO
-		
+		return String.format("%" + TEXTWIDTH + "s", str);
+			
 	}
 }

@@ -28,9 +28,9 @@ public class GPSComputer {
 	}
 	
 	public double totalDistance() {
-		double totalDistance = 0;
-	
-		// Gå gjennom alle punkter og legg sammen avstandene mellom etterfølgende punkter
+
+		double totalDistance = 0.0;
+		
 		for (int i = 0; i < gpspoints.length - 1; i++) {
 			totalDistance += GPSUtils.distance(gpspoints[i], gpspoints[i + 1]);
 		}
@@ -38,52 +38,75 @@ public class GPSComputer {
 	}
 
 	public double totalElevation() {
-		double totalElevation = 0;
-	
-		// Gå gjennom alle punktene
+
+		double totalElevation = 0.0;
+		
 		for (int i = 0; i < gpspoints.length - 1; i++) {
-			double elevationDiff = gpspoints[i + 1].getElevation() - gpspoints[i].getElevation();
-			if (elevationDiff > 0) {
-				totalElevation += elevationDiff;
+			double currentElevation = gpspoints[i].getElevation();
+			double nextElevation = gpspoints[i + 1].getElevation();
+			
+			if (nextElevation > currentElevation) {
+				totalElevation += nextElevation - currentElevation;
 			}
 		}
 		return totalElevation;
 	}
 
 	public int totalTime() {
-		return gpspoints[gpspoints.length - 1].getTime() - gpspoints[0].getTime();
+
+		if (gpspoints.length < 2) {
+			return 0;
+		}
+		
+		int startTime = gpspoints[0].getTime();
+		int endTime = gpspoints[gpspoints.length - 1].getTime();
+		
+		return endTime - startTime;
 	}
 		
 
 	public double[] speeds() {
-		double[] speeds = new double[gpspoints.length - 1];
-	
-		// Beregn hastigheten mellom hvert etterfølgende punkt
+
+		double[] speeds = new double[gpspoints.length-1];
+		
 		for (int i = 0; i < gpspoints.length - 1; i++) {
-			double distance = GPSUtils.distance(gpspoints[i], gpspoints[i + 1]);
-			int time = gpspoints[i + 1].getTime() - gpspoints[i].getTime();
-			speeds[i] = distance / time;
+			double distance = GPSUtils.distance(gpspoints[i], gpspoints[i + 1]);		
+			int timeDiff = gpspoints[i + 1].getTime() - gpspoints[i].getTime();
+		
+			
+			if (timeDiff == 0) {
+				speeds[i] = 0;
+			} else {
+				speeds[i] = distance / timeDiff;
+			}
 		}
 		return speeds;
+		
 	}
 	
 	public double maxSpeed() {
+		
+		double maxspeed = 0;
 		double[] speeds = speeds();
-		double maxSpeed = 0;
-	
-		// Finn maksimal hastighet
+		
 		for (double speed : speeds) {
-			if (speed > maxSpeed) {
-				maxSpeed = speed;
+			if (speed > maxspeed) {
+				maxspeed = speed;
 			}
 		}
-		return maxSpeed;
+		return maxspeed;
+		
 	}
 
 	public double averageSpeed() {
-		double totalDistance = totalDistance(); // i meter
-		int totalTime = totalTime(); // i sekunder
-		return (totalDistance / totalTime) * 3.6; // Konverter fra m/s til km/t
+		
+		double totalDistance = totalDistance();
+		
+		int totalTime = totalTime();
+		
+		double average = totalDistance / totalTime;
+		
+		return average;
 	}
 
 
@@ -91,36 +114,39 @@ public class GPSComputer {
 	public static final double MS = 2.23;
 
 	public double kcal(double weight, int secs, double speed) {
-		double speedmph = speed * MS; // Konverter til miles per hour (mph)
-		double met = 0;
-	
-		// Bestem MET basert på hastighet
+		double met = 0;		
+		double speedmph = speed * MS;
+
 		if (speedmph < 10) {
 			met = 4.0;
-		} else if (speedmph < 12) {
+		} else if (speedmph <= 12 ) {
 			met = 6.0;
-		} else if (speedmph < 14) {
+		} else if (speedmph <= 14) {
 			met = 8.0;
-		} else if (speedmph < 16) {
+		} else if (speedmph <= 16) {
 			met = 10.0;
-		} else if (speedmph < 20) {
+		} else if (speedmph <= 20) {
 			met = 12.0;
 		} else {
 			met = 16.0;
 		}
-	
-		double hours = secs / 3600.0;
-		return met * weight * hours;
+		
+		double timeInHours = secs / 3600.0;
+		
+		double kcal = met * weight * timeInHours;
+		
+		return kcal;
 	}
 
 	public double totalKcal(double weight) {
+
 		double totalkcal = 0;
 		double[] speeds = speeds();
-		int[] times = new int[speeds.length];
-	
-		for (int i = 0; i < gpspoints.length - 1; i++) {
-			int time = gpspoints[i + 1].getTime() - gpspoints[i].getTime();
-			totalkcal += kcal(weight, time, speeds[i]);
+		
+		for (int i = 0; i < speeds.length; i++) {
+			int secs = gpspoints[i + 1].getTime() - gpspoints[i].getTime();
+			
+			totalkcal += kcal(weight, secs, speeds[i]);
 		}
 		return totalkcal;
 	}
@@ -128,14 +154,22 @@ public class GPSComputer {
 	private static double WEIGHT = 80.0;
 	
 	public void displayStatistics() {
+		int weight = 80;
+		int totalTime = totalTime();
+		double totalDistance = totalDistance() / 1000.0;
+		double totalElevation = totalElevation();
+		double maxSpeed = maxSpeed() * 3.6;
+		double averageSpeed = averageSpeed() * 3.6;
+		double totalKcal = totalKcal(weight);
+		
 		System.out.println("==============================================");
-		System.out.println("Total Time     :   " + GPSUtils.formatTime(totalTime()));
-		System.out.println("Total distance :      " + GPSUtils.formatDouble(totalDistance() / 1000) + " km");
-		System.out.println("Total elevation:     " + GPSUtils.formatDouble(totalElevation()) + " m");
-		System.out.println("Max speed      :      " + GPSUtils.formatDouble(maxSpeed() * 3.6) + " km/t");
-		System.out.println("Average speed  :      " + GPSUtils.formatDouble(averageSpeed()) + " km/t");
-		System.out.println("Energy         :     " + GPSUtils.formatDouble(totalKcal(WEIGHT)) + " kcal");
-		System.out.println("==============================================");
+	    System.out.printf("Total Time     :   %s\n", GPSUtils.formatTime(totalTime));
+	    System.out.printf("Total distance :   %8.2f km\n", totalDistance);
+	    System.out.printf("Total elevation:   %8.2f m\n", totalElevation);
+	    System.out.printf("Max speed      :   %8.2f km/t\n", maxSpeed);
+	    System.out.printf("Average speed  :   %8.2f km/t\n", averageSpeed);
+	    System.out.printf("Energy         :   %8.2f kcal\n", totalKcal);
+	    System.out.println("==============================================");
 	}
 
 }

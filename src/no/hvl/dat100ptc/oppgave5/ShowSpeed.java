@@ -1,7 +1,6 @@
 package no.hvl.dat100ptc.oppgave5;
 
 import javax.swing.JOptionPane;
-
 import easygraphics.EasyGraphics;
 import no.hvl.dat100ptc.oppgave1.GPSPoint;
 import no.hvl.dat100ptc.oppgave2.GPSData;
@@ -38,27 +37,22 @@ public class ShowSpeed extends EasyGraphics {
 	}
 	
 	public void showSpeedProfile(int ybase) {
-    
-		// Hent hastighetsdata
+		
+		int x = MARGIN,y;
 		double[] speeds = gpscomputer.speeds();
+		double averageSpeed = gpscomputer.averageSpeed();
 		
-		// Sett farge for søylene
-		setColor(0, 0, 255); // Blå farge for hastighetssøyler
+		double averageSpeedKmH = averageSpeed * 3.6;
 		
-		// Tegn en søyle for hver hastighet
-		int x = MARGIN;
-		for (int i = 0; i < speeds.length; i++) {
-			// Skaler hastigheten til høyden på søylen (multiplikasjonsfaktor kan justeres)
-			int barHeight = (int) speeds[i];  // Alternativt: (int)(speeds[i] * 5) for mer synlige søyler
-			
-			// Y-posisjonen for søylen starter på ybase og går oppover avhengig av hastigheten
-			int y = ybase - barHeight;
-			
-			// Tegn søylen
-			drawLine(x, ybase, x, y);
-			
-			// Øk x-koordinaten for neste søyle (bredde på søylene kan justeres)
-			x += 2; // Avstand mellom søylene
+		for (int i = 0; i < speeds.length; i ++) {
+			double speedKmH = speeds[i] * 3.6;
+		
+		int speedY = ybase - (int) speedKmH;
+		drawLine(x, ybase, x, speedY);
+		x++;
 		}
+		int avgSpeedY = ybase - (int) averageSpeedKmH;
+		drawLine(MARGIN, avgSpeedY, x, avgSpeedY);
+		
 	}
 }
