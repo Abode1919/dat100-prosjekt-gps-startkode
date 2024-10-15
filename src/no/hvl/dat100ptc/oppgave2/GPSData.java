@@ -8,9 +8,9 @@ public class GPSData {
     protected int antall = 0;
 
     public GPSData(int n) {
-        // Oppretter en referansetabell av GPS punkter
+        // Opprettar ein referansetabell av GPS-punkt
         this.gpspoints = new GPSPoint[n];
-        this.antall = 0; // Setter antall til 0
+        this.antall = 0; // Settar antall til 0
     }
 
     public GPSPoint[] getGPSPoints() {
@@ -19,7 +19,7 @@ public class GPSData {
     
     protected boolean insertGPS(GPSPoint gpspoint) {
         if (antall < gpspoints.length) {
-            gpspoints[antall] = gpspoint; // Setter inn GPS-punktet
+            gpspoints[antall] = gpspoint; // Settar inn GPS-punktet
             antall++; // Inkrementerer antall
             return true;
         }
@@ -28,7 +28,7 @@ public class GPSData {
 
     public boolean insert(String time, String latitude, String longitude, String elevation) {
         GPSPoint gpspoint = GPSDataConverter.convert(time, latitude, longitude, elevation);
-        return insertGPS(gpspoint); // Setter inn GPS-punktet
+        return insertGPS(gpspoint); // Settar inn GPS-punktet
     }
 
     public void print() {
