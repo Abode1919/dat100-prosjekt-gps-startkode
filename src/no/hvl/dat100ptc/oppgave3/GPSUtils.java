@@ -25,26 +25,54 @@ public class GPSUtils {
 	public static double findMin(double[] da) {
 
 		double min;
+		
+		min = da[0];
+		
+		for (double d : da) {
+			if(d<min) {
+				min=d;
+			}
+		}
+		return min;
 
-		// TODO 
-		throw new UnsupportedOperationException(TODO.method());
+	
 		
 	}
 
 	public static double[] getLatitudes(GPSPoint[] gpspoints) {
-
-		throw new UnsupportedOperationException(TODO.method());
 		
-		// TODO
+        double latitude[]= new double[gpspoints.length];
+        
+		for(int i=0; i<gpspoints.length; i++) {
+			String a = String.valueOf(gpspoints[i]); 
+	        
+	        String b = a.substring(a.indexOf('(') + 1, a.indexOf(')'));
+
+	        String[] koordinat = b.split(",");
+
+	        latitude[i]=Double.parseDouble(koordinat[0]);
+	      
+		}
+		return latitude;
+		
+		
 	}
 
 	public static double[] getLongitudes(GPSPoint[] gpspoints) {
 
 		
-		throw new UnsupportedOperationException(TODO.method());
-		
-		// TODO 
+		double longitudes[]= new double[gpspoints.length];
+        
+		for(int i=0; i<gpspoints.length; i++) {
+			String a = String.valueOf(gpspoints[i]); 
+	        
+			String b = a.substring(a.indexOf('(') + 1, a.indexOf(')'));
 
+			String[] koordinat = b.split(",");
+
+			longitudes[i]=Double.parseDouble(koordinat[1]);
+		}
+		return longitudes;
 	}
 
 	private static final int R = 6371000; // jordens radius
@@ -53,7 +81,7 @@ public class GPSUtils {
 
 		double d;
 		double latitude1, longitude1, latitude2, longitude2;
-
+				
 		throw new UnsupportedOperationException(TODO.method());
 
 		// TODO 
